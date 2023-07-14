@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "230042021293",
+    "project_id": "fir-crudoperation-ba0cb",
+    "storage_bucket": "fir-crudoperation-ba0cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230042021293:android:190f0a5ba5a1257d138524",
+        "android_client_info": {
+          "package_name": "com.example.crud_operation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230042021293-rn1scvkrjf58fug0sjqprvhid533ic20.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzGr4CYzg3l1X6lwLtjjmDadK4rTuN4c8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230042021293-rn1scvkrjf58fug0sjqprvhid533ic20.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
