@@ -20,10 +20,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.deepPurple),
-      // home: SplashScreen(),
+      home: SplashScreen(),
       // home: ImageUploadFirebaseScreen(),
       // home: AddPostScreen(),
-      home: PostScreen(),
+      // home: PostScreen(),
       // home: AddPostScreen(),
     );
   }

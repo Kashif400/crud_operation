@@ -24,6 +24,14 @@ class _PostScreenState extends State<PostScreen> {
   bool loading = false;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    search.dispose();
+    updateContoller.dispose();
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -86,39 +94,33 @@ class _PostScreenState extends State<PostScreen> {
                   itemBuilder: (context, snapshot, animation, index) {
                     final title = snapshot.child('title').value.toString();
                     if (search.text.isEmpty) {
-                      return Expanded(
-                        child: InkWell(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UploadImageScreen(
-                                        id: snapshot
-                                            .child('id')
-                                            .value
-                                            .toString(),
-                                      ))),
-                          child: Card(
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: CachedNetworkImageProvider(
-                                      snapshot
-                                          .child('profile')
-                                          .value
-                                          .toString()),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(snapshot.child('title').value.toString()),
-                                Text(snapshot.child('id').value.toString()),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                        onPressed: () async {
+                      return InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UploadImageScreen(
+                                      id: snapshot.child('id').value.toString(),
+                                    ))),
+                        child: Card(
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: CachedNetworkImageProvider(
+                                    snapshot.child('profile').value.toString()),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(snapshot.child('title').value.toString()),
+                              Text(snapshot.child('id').value.toString()),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        try {
                                           await ref
                                               .child(snapshot
                                                   .child('id')
@@ -132,22 +134,24 @@ class _PostScreenState extends State<PostScreen> {
                                             Utils()
                                                 .toastMessage(error.toString());
                                           });
-                                        },
-                                        child: Text('delete')),
-                                    TextButton(
-                                        onPressed: () {
-                                          showMyDailog(
-                                              title,
-                                              snapshot
-                                                  .child('id')
-                                                  .value
-                                                  .toString());
-                                        },
-                                        child: Text('Edite')),
-                                  ],
-                                )
-                              ],
-                            ),
+                                        } catch (e) {
+                                          print(e.toString());
+                                        }
+                                      },
+                                      child: Text('delete')),
+                                  TextButton(
+                                      onPressed: () {
+                                        showMyDailog(
+                                            title,
+                                            snapshot
+                                                .child('id')
+                                                .value
+                                                .toString());
+                                      },
+                                      child: Text('Edite')),
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       );
@@ -187,19 +191,23 @@ class _PostScreenState extends State<PostScreen> {
                                   children: [
                                     TextButton(
                                         onPressed: () async {
-                                          await ref
-                                              .child(snapshot
-                                                  .child('id')
-                                                  .value
-                                                  .toString())
-                                              .remove()
-                                              .then((value) {
-                                            Utils().toastMessage(
-                                                'Successful Delete');
-                                          }).onError((error, stackTrace) {
-                                            Utils()
-                                                .toastMessage(error.toString());
-                                          });
+                                          try {
+                                            await ref
+                                                .child(snapshot
+                                                    .child('id')
+                                                    .value
+                                                    .toString())
+                                                .remove()
+                                                .then((value) {
+                                              Utils().toastMessage(
+                                                  'Successful Delete');
+                                            }).onError((error, stackTrace) {
+                                              Utils().toastMessage(
+                                                  error.toString());
+                                            });
+                                          } catch (e) {
+                                            print(e.toString());
+                                          }
                                         },
                                         child: Text('delete')),
                                     TextButton(
@@ -245,20 +253,24 @@ class _PostScreenState extends State<PostScreen> {
           return AlertDialog(
             actions: [
               TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       loading = true;
                     });
-                    ref.child(id).update({
-                      'title': updateContoller.text.trim(),
-                    }).then((value) {
-                      loading = false;
-                      Utils().toastMessage('Successful Update');
-                      Navigator.pop(context);
-                    }).onError((error, stackTrace) {
-                      Utils().toastMessage(error.toString());
-                      loading = false;
-                    });
+                    try {
+                      await ref.child(id).update({
+                        'title': updateContoller.text.trim(),
+                      }).then((value) {
+                        loading = false;
+                        Utils().toastMessage('Successful Update');
+                        Navigator.pop(context);
+                      }).onError((error, stackTrace) {
+                        Utils().toastMessage(error.toString());
+                        loading = false;
+                      });
+                    } catch (e) {
+                      print(e.toString());
+                    }
                   },
                   child: Text('Update')),
               TextButton(

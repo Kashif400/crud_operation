@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 
 // ignore: must_be_immutable
 class UploadImageScreen extends StatefulWidget {
-  String id;
-  UploadImageScreen({Key? key, required this.id}) : super(key: key);
+  String? id;
+  UploadImageScreen({Key? key, this.id}) : super(key: key);
 
   @override
   State<UploadImageScreen> createState() => _UploadImageScreenState();

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,7 +52,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       loading = true;
     });
     String id = DateTime.now().millisecondsSinceEpoch.toString();
-    databaseRef.child(id).set({
+    databaseRef.child('').child(id).set({
       'title': postController.text.toString(),
       'id': id,
       'profile': url
@@ -95,15 +96,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     child: Center(
                       child: _image != null
                           ? Image.file(_image!.absolute)
-                          : Center(child: Icon(Icons.image)),
+                          : const Center(child: Icon(Icons.image)),
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               TextFormField(
                 controller: postController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     hintText: 'What is in your mind?',
                     border: OutlineInputBorder()),
               ),
