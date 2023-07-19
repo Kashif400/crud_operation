@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:crud_operation/ui/upload_image.dart';
+import 'package:crud_operation/ui/storage/upload_image.dart';
 import 'package:crud_operation/ui/view_photo_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import '../utils/utils.dart';
-import 'auth/login_screen.dart';
-import 'auth/photos.dart';
-import 'firebase_database/add_posts.dart';
+import '../../utils/utils.dart';
+import '../auth/login_screen.dart';
+import '../storage/photos.dart';
+import 'add_posts.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:crud_operation/ui/firebase_database/update_images.dart';
+import 'package:crud_operation/ui/storage/update_images.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../utils/utils.dart';
-import '../upload_image.dart';
+import 'upload_image.dart';
 
 class ImageUploadFirebaseScreen extends StatefulWidget {
   ImageUploadFirebaseScreen({

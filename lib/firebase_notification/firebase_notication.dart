@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:crud_operation/ui/splash_screen.dart';
+import 'package:crud_operation/splash_services/splash_screen.dart';
 import 'package:crud_operation/utils/utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

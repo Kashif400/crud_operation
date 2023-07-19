@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../widgets/round_button.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-import '../auth/photos.dart';
+import 'photos.dart';
 
 class UpdateImages extends StatefulWidget {
   final String imageUrl;

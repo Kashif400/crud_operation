@@ -6,8 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:ndialog/ndialog.dart';
 import '../utils/utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,19 +22,25 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
   final databaseReference = FirebaseDatabase.instance.ref('pdfs');
   String pdfPath = '';
   String pdfUrl = '';
+  bool loading = false;
   // late String pdfUrl;
   void _pickFile() async {
-    // opens storage to pick files and the picked file or files
-    // are assigned into result and if no file is chosen result is null.
-    // you can also toggle "allowMultiple" true or false depending on your need
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
     );
 
+    // progress dialog
+    ProgressDialog progressDialog = ProgressDialog(
+      context,
+      title: const Text('Uploading'),
+      message: const Text('Please wait...'),
+    );
+
     // if no file is picked
     if (result != null) {
+      progressDialog.show();
       String file = DateTime.now().millisecondsSinceEpoch.toString() +
           '.' +
           result.files.single.extension!;
@@ -55,44 +60,20 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
           'file_name': fileName.name.toString(),
           'pdf': pdfUrl,
         }).then((value) {
-          Utils().toastMessage('Successful Upload Images');
+          Utils().toastMessage('Successful Upload document');
+          progressDialog.dismiss();
         }).onError((error, stackTrace) {
           Utils().toastMessage(error.toString());
+          progressDialog.dismiss();
         });
       }
-
-      // return downloadUrl;
     }
-
-    // we will log the name, size and path of the
-    // first picked file (if multiple are selected)
   }
-
-  // Future<File> getFileFromUrl(String url) async {
-  //   try {
-  //     var data = await http.get(Uri.parse(url));
-  //     var bytes = data.bodyBytes;
-  //     var dir = await getApplicationDocumentsDirectory();
-  //     File file = File("${dir.path}/mypdfonline.pdf");
-
-  //     File urlFile = await file.writeAsBytes(bytes);
-  //     pdfPath = urlFile.path;
-  //     return urlFile;
-  //   } catch (e) {
-  //     throw Exception("Error opening url file");
-  //   }
-  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getFileFromUrl(pdfUrl).then((f) {
-    //   setState(() {
-    //     pdfPath = f.path;
-    //   });
-    //   print(pdfPath.toString());
-    // });
   }
 
   @override
@@ -100,16 +81,8 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 30,
-          ),
-          Center(
-            child: MaterialButton(
-              onPressed: () {
-                _pickFile();
-              },
-              child: Text('Pick File'),
-            ),
           ),
           Expanded(
               child: FirebaseAnimatedList(
@@ -122,12 +95,11 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
                             borderRadius: BorderRadius.circular(10)),
                         child: Card(
                           child: InkWell(
+                            onLongPress: () {
+                              showMyDailog(
+                                  snapshot.child('id').value.toString());
+                            },
                             onTap: () async {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) =>
-                              //             PdfView(pdfPath: file.path)));
                               if (pdfPath != null) {
                                 Navigator.push(
                                     context,
@@ -153,6 +125,54 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
                   })),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          _pickFile();
+        },
+      ),
     );
+  }
+
+  Future<void> showMyDailog(String id) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Do you want to delete'),
+            content: const Text('Delete...'),
+            actions: [
+              MaterialButton(
+                onPressed: () async {
+                  ProgressDialog progressDialog = ProgressDialog(
+                    context,
+                    title: const Text('Delete'),
+                    message: const Text('Please wait'),
+                  );
+
+                  progressDialog.show();
+
+                  await databaseReference.child(id).remove().then((value) {
+                    Utils().toastMessage('delete document');
+                    Navigator.pop(context);
+                    progressDialog.dismiss();
+                  }).onError((error, stackTrace) {
+                    Utils().toastMessage(error.toString());
+
+                    Navigator.pop(context);
+                    progressDialog.dismiss();
+                  });
+                },
+                child: Text('Yes'),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('No'),
+              ),
+            ],
+          );
+        });
   }
 }

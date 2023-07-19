@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../ui/auth/login_screen.dart';
-import '../ui/post_screen.dart';
+import '../ui/firebase_database/post_screen.dart';
 
 class SplashServices {
   void isLogin(BuildContext context) {

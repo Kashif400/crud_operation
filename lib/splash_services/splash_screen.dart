@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../firebase_services/splash_services.dart';
+import 'splash_services.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

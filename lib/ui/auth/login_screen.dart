@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 
 import '../../utils/utils.dart';
 import '../../widgets/round_button.dart';
-import '../fogot_password.dart';
-import '../post_screen.dart';
+import 'fogot_password.dart';
+import '../firebase_database/post_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {

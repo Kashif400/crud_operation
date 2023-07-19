@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'document file/document_upload_screen.dart';
-import 'ui/splash_screen.dart';
+import 'splash_services/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

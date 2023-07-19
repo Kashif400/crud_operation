@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:crud_operation/ui/auth/photos.dart';
+import 'package:crud_operation/ui/storage/photos.dart';
 import 'package:crud_operation/utils/utils.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
