@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crud_operation/ui/upload_image.dart';
+import 'package:crud_operation/ui/view_photo_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -104,10 +105,28 @@ class _PostScreenState extends State<PostScreen> {
                         child: Card(
                           child: Column(
                             children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundImage: CachedNetworkImageProvider(
-                                    snapshot.child('profile').value.toString()),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ViewPhotoScreen(
+                                              image: snapshot
+                                                  .child('profile')
+                                                  .value
+                                                  .toString())));
+                                },
+                                child: Hero(
+                                  tag: 'image_tag',
+                                  child: CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: CachedNetworkImageProvider(
+                                        snapshot
+                                            .child('profile')
+                                            .value
+                                            .toString()),
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 width: 10,

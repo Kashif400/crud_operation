@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crud_operation/ui/firebase_database/update_images.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -30,13 +31,6 @@ class _ImageUploadFirebaseScreenState extends State<ImageUploadFirebaseScreen> {
   final picker = ImagePicker();
   static String? newUrl;
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _image!.delete();
-  }
-
   //single image pick in uplaod firebase storage
   Future getImageGallery() async {
     final pickedFile =
@@ -54,14 +48,15 @@ class _ImageUploadFirebaseScreenState extends State<ImageUploadFirebaseScreen> {
   late firebase_storage.Reference ref;
   Future UploadImage(String id) async {
     try {
-      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-          .ref('/User/' + DateTime.now().millisecondsSinceEpoch.toString());
+      final id = DateTime.now().millisecondsSinceEpoch.toString();
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref('/User/' + id);
       firebase_storage.UploadTask uploadTask = ref.putFile(_image!.absolute);
 
       Future.value(uploadTask).then((value) async {
         newUrl = await ref.getDownloadURL();
 
-        databaseReference.child('id').update({'image_url': newUrl});
+        databaseReference.child('id').set({'image_url': newUrl});
       });
     } catch (e) {
       print(e.toString());
@@ -97,10 +92,62 @@ class _ImageUploadFirebaseScreenState extends State<ImageUploadFirebaseScreen> {
                         children: [
                           TextButton(
                               onPressed: () {
-                                showMyDailog(
-                                  snapshot.child('id').value.toString(),
-                                  snapshot.child('image_url').value.toString(),
-                                );
+                                // showMyDailog(
+                                //   snapshot.child('id').value.toString(),
+                                //   snapshot.child('image_url').value.toString(),
+                                // );
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UpdateImages(
+                                              imageUrl: snapshot
+                                                  .child('image_url')
+                                                  .value
+                                                  .toString(),
+                                            )));
+
+                                // showDialog(
+                                //     context: context,
+                                //     builder: (context) {
+                                //       return AlertDialog(
+                                //         title: Text('Update'),
+                                //         content: InkWell(
+                                //           onTap: () {
+                                //             getImageGallery();
+                                //           },
+                                //           child: Container(
+                                //               width: 200,
+                                //               height: 200,
+                                //               decoration: BoxDecoration(
+                                //                   border: Border.all(
+                                //                       color: Colors.black)),
+                                //               child: Expanded(
+                                //                 child: _image != null
+                                //                     ? Image.file(
+                                //                         _image!.absolute)
+                                //                     : Center(
+                                //                         child:
+                                //                             Icon(Icons.image)),
+                                //               )),
+                                //         ),
+                                //         actions: [
+                                //           TextButton(
+                                //               onPressed: () async {
+                                //                 await UploadImage(snapshot
+                                //                     .child('id')
+                                //                     .value
+                                //                     .toString());
+                                //                 Navigator.pop(context);
+                                //               },
+                                //               child: Text('Update')),
+                                //           TextButton(
+                                //               onPressed: () {
+                                //                 Navigator.pop(context);
+                                //               },
+                                //               child: Text('Cancel'))
+                                //         ],
+                                //       );
+                                //     });
                               },
                               child: Text('Edite')),
                           TextButton(
@@ -147,6 +194,7 @@ class _ImageUploadFirebaseScreenState extends State<ImageUploadFirebaseScreen> {
             content: InkWell(
               onTap: () {
                 getImageGallery();
+                setState(() {});
               },
               child: Container(
                   width: 200,

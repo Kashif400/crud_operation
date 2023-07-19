@@ -3,21 +3,26 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../utils/utils.dart';
 import '../../widgets/round_button.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({Key? key}) : super(key: key);
+import '../auth/photos.dart';
+
+class UpdateImages extends StatefulWidget {
+  final String imageUrl;
+  const UpdateImages({Key? key, required this.imageUrl})
+      : super(
+          key: key,
+        );
 
   @override
-  State<AddPostScreen> createState() => _AddPostScreenState();
+  State<UpdateImages> createState() => _UpdateImagesState();
 }
 
-class _AddPostScreenState extends State<AddPostScreen> {
+class _UpdateImagesState extends State<UpdateImages> {
   final postController = TextEditingController();
   bool loading = false;
-  final databaseRef = FirebaseDatabase.instance.ref('Post');
+  final databaseReference = FirebaseDatabase.instance.ref('images');
   FirebaseStorage storage = FirebaseStorage.instance;
   File? _image;
   final picker = ImagePicker();
@@ -35,52 +40,43 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
   }
 
+  late firebase_storage.Reference ref;
   Future UploadImage() async {
-    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-        .ref('/User/' + DateTime.now().millisecondsSinceEpoch.toString());
-    firebase_storage.UploadTask uploadTask = ref.putFile(_image!.absolute);
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch.toString();
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref('/User/' + id);
+      firebase_storage.UploadTask uploadTask = ref.putFile(_image!.absolute);
 
-    Future.value(uploadTask).then((value) async {
-      newUrl = await ref.getDownloadURL();
-      insertData(newUrl.toString());
-    });
-  }
+      Future.value(uploadTask).then((value) async {
+        newUrl = await ref.getDownloadURL();
 
-  Future<void> insertData(String url) async {
-    setState(() {
-      loading = true;
-    });
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
-    databaseRef.child('').child(id).set({
-      'title': postController.text.toString(),
-      'id': id,
-      'profile': url
-    }).then((value) {
-      Utils().toastMessage('Post added');
-      Navigator.pop(context);
-      setState(() {
-        loading = false;
+        databaseReference
+            .child('id')
+            .update({'image_url': newUrl}).then((value) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ImageUploadFirebaseScreen()));
+        });
       });
-    }).onError((error, stackTrace) {
-      Utils().toastMessage(error.toString());
-      setState(() {
-        loading = false;
-      });
-    });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Post'),
+        title: Text('Update Images'),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               InkWell(
@@ -93,25 +89,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     decoration:
                         BoxDecoration(border: Border.all(color: Colors.black)),
                     child: Center(
-                      child: _image != null
-                          ? Image.file(_image!.absolute)
-                          : const Center(child: Icon(Icons.image)),
-                    )),
+                        child: _image != null
+                            ? Image.file(_image!.absolute)
+                            : Image(image: NetworkImage(widget.imageUrl)))),
               ),
               const SizedBox(
                 height: 20,
               ),
-              TextFormField(
-                controller: postController,
-                decoration: const InputDecoration(
-                    hintText: 'What is in your mind?',
-                    border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 30,
-              ),
               RoundButton(
-                  title: 'Add',
+                  title: 'Update',
                   loading: loading,
                   onTap: () {
                     UploadImage();
